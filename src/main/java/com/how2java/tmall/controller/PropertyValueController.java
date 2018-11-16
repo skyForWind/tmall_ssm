@@ -21,7 +21,7 @@ public class PropertyValueController {
     ProductService productService;
 
     @RequestMapping("admin_propertyValue_edit")
-    public String edit(Model model,int pid) {
+    public String edit(Model model, int pid) {
         Product p = productService.get(pid);
         propertyValueService.init(p);
         List<PropertyValue> pvs = propertyValueService.list(p.getId());

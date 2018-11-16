@@ -1,5 +1,5 @@
 package com.how2java.tmall.service;
- 
+
 import com.how2java.tmall.pojo.Property;
 
 import java.util.List;

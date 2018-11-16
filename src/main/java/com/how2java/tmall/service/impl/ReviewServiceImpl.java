@@ -1,6 +1,7 @@
 package com.how2java.tmall.service.impl;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.how2java.tmall.mapper.ReviewMapper;
@@ -37,17 +38,17 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.selectByPrimaryKey(id);
     }
 
-    public List<Review> list(int pid){
-        ReviewExample example =new ReviewExample();
+    public List<Review> list(int pid) {
+        ReviewExample example = new ReviewExample();
         example.createCriteria().andPidEqualTo(pid);
         example.setOrderByClause("id desc");
 
-        List<Review> result =reviewMapper.selectByExample(example);
+        List<Review> result = reviewMapper.selectByExample(example);
         setUser(result);
         return result;
     }
 
-    public void setUser(List<Review> reviews){
+    public void setUser(List<Review> reviews) {
         for (Review review : reviews) {
             setUser(review);
         }
@@ -55,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private void setUser(Review review) {
         int uid = review.getUid();
-        User user =userService.get(uid);
+        User user = userService.get(uid);
         review.setUser(user);
     }
 

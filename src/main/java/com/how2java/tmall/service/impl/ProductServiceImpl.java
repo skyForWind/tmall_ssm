@@ -16,6 +16,7 @@ import com.how2java.tmall.service.OrderItemService;
 import com.how2java.tmall.service.ProductImageService;
 import com.how2java.tmall.service.ProductService;
 import com.how2java.tmall.service.ReviewService;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -52,11 +53,12 @@ public class ProductServiceImpl implements ProductService {
         return p;
     }
 
-    public void setCategory(List<Product> ps){
+    public void setCategory(List<Product> ps) {
         for (Product p : ps)
             setCategory(p);
     }
-    public void setCategory(Product p){
+
+    public void setCategory(Product p) {
         int cid = p.getCid();
         Category c = categoryService.get(cid);
         p.setCategory(c);
@@ -93,12 +95,12 @@ public class ProductServiceImpl implements ProductService {
     public void fillByRow(List<Category> cs) {
         int productNumberEachRow = 8;
         for (Category c : cs) {
-            List<Product> products =  c.getProducts();
-            List<List<Product>> productsByRow =  new ArrayList<>();
-            for (int i = 0; i < products.size(); i+=productNumberEachRow) {
-                int size = i+productNumberEachRow;
-                size= size>products.size()?products.size():size;
-                List<Product> productsOfEachRow =products.subList(i, size);
+            List<Product> products = c.getProducts();
+            List<List<Product>> productsByRow = new ArrayList<>();
+            for (int i = 0; i < products.size(); i += productNumberEachRow) {
+                int size = i + productNumberEachRow;
+                size = size > products.size() ? products.size() : size;
+                List<Product> productsOfEachRow = products.subList(i, size);
                 productsByRow.add(productsOfEachRow);
             }
             c.setProductsByRow(productsByRow);
@@ -124,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> search(String keyword) {
         ProductExample example = new ProductExample();
-        example.createCriteria().andNameLike("%"+keyword+"%");
+        example.createCriteria().andNameLike("%" + keyword + "%");
         example.setOrderByClause("id desc");
 
         List result = productMapper.selectByExample(example);

@@ -17,6 +17,7 @@ public class Property {
     public void setCategory(Category category) {
         this.category = category;
     }
+
     public Integer getId() {
         return id;
     }

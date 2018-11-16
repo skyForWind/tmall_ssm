@@ -19,12 +19,12 @@ import com.how2java.tmall.util.Page;
 public class UserController {
     @Autowired
     UserService userService;
- 
-    @RequestMapping("admin_user_list")
-    public String list(Model model, Page page){
-        PageHelper.offsetPage(page.getStart(),page.getCount());
 
-        List<User> us= userService.list();
+    @RequestMapping("admin_user_list")
+    public String list(Model model, Page page) {
+        PageHelper.offsetPage(page.getStart(), page.getCount());
+
+        List<User> us = userService.list();
 
         int total = (int) new PageInfo<>(us).getTotal();
         page.setTotal(total);

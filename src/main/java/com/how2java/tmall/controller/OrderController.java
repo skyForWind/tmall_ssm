@@ -26,10 +26,10 @@ public class OrderController {
     OrderItemService orderItemService;
 
     @RequestMapping("admin_order_list")
-    public String list(Model model, Page page){
-        PageHelper.offsetPage(page.getStart(),page.getCount());
+    public String list(Model model, Page page) {
+        PageHelper.offsetPage(page.getStart(), page.getCount());
 
-        List<Order> os= orderService.list();
+        List<Order> os = orderService.list();
 
         int total = (int) new PageInfo<>(os).getTotal();
         page.setTotal(total);

@@ -22,7 +22,7 @@ public class Product {
 
 
     /*非数据库字段*/
-    private Category  category;
+    private Category category;
 
     private ProductImage firstProductImage;
 

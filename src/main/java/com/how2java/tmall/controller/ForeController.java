@@ -43,22 +43,22 @@ public class ForeController {
 
     @RequestMapping("forehome")
     public String home(Model model) {
-        List<Category> cs= categoryService.list();
+        List<Category> cs = categoryService.list();
         productService.fill(cs);
         productService.fillByRow(cs);
-         model.addAttribute("cs", cs);
+        model.addAttribute("cs", cs);
         return "fore/home";
     }
 
     @RequestMapping("foreregister")
-    public String register(Model model,User user) {
-        String name =  user.getName();
+    public String register(Model model, User user) {
+        String name = user.getName();
         name = HtmlUtils.htmlEscape(name);
         user.setName(name);
         boolean exist = userService.isExist(name);
-        
-        if(exist){
-            String m ="用户名已经被使用,不能使用";
+
+        if (exist) {
+            String m = "用户名已经被使用,不能使用";
             model.addAttribute("msg", m);
             return "fore/register";
         }
@@ -68,19 +68,21 @@ public class ForeController {
     }
 
     @RequestMapping("forelogin")
-    public String login(@RequestParam("name") String name, @RequestParam("password") String password, Model model, HttpSession session) {
+    public String login(@RequestParam("name") String name, @RequestParam("password") String password,
+                        Model model, HttpSession session) {
         name = HtmlUtils.htmlEscape(name);
-        User user = userService.get(name,password);
+        User user = userService.get(name, password);
 
-        if(null==user){
+        if (null == user) {
             model.addAttribute("msg", "账号密码错误");
             return "fore/login";
         }
         session.setAttribute("user", user);
         return "redirect:forehome";
     }
+
     @RequestMapping("forelogout")
-    public String logout( HttpSession session) {
+    public String logout(HttpSession session) {
         session.removeAttribute("user");
         return "redirect:forehome";
     }
@@ -106,21 +108,21 @@ public class ForeController {
 
     @RequestMapping("forecheckLogin")
     @ResponseBody
-    public String checkLogin(HttpSession session){
-        User user = (User)session.getAttribute("user");
-        if(null != user)
+    public String checkLogin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (null != user)
             return "success";
         return "fail";
     }
 
     @RequestMapping("foreloginAjax")
     @ResponseBody
-    public String loginAjax(@RequestParam("name")String name, @RequestParam("password")String password,
-                            HttpSession session){
+    public String loginAjax(@RequestParam("name") String name, @RequestParam("password") String password,
+                            HttpSession session) {
         name = HtmlUtils.htmlEscape(name);
         User user = userService.get(name, password);
 
-        if(null == user){
+        if (null == user) {
             return "fail";
         }
         session.setAttribute("user", user);
@@ -128,13 +130,13 @@ public class ForeController {
     }
 
     @RequestMapping("forecategory")
-    public String category(int cid, String sort, Model model){
+    public String category(int cid, String sort, Model model) {
         Category c = categoryService.get(cid);
         productService.fill(c);
         productService.setSaleAndReviewNumber(c.getProducts());
 
-        if(null != sort){
-            switch(sort){
+        if (null != sort) {
+            switch (sort) {
                 case "review":
                     Collections.sort(c.getProducts(), new ProductReviewComparator());
                     break;
@@ -157,29 +159,29 @@ public class ForeController {
     }
 
     @RequestMapping("foresearch")
-    public String search(String keyword, Model model){
-        PageHelper.offsetPage(0,20);
+    public String search(String keyword, Model model) {
+        PageHelper.offsetPage(0, 20);
 
         List<Product> ps = productService.search(keyword);
         productService.setSaleAndReviewNumber(ps);
 
-        model.addAttribute ("ps", ps);
+        model.addAttribute("ps", ps);
         return "fore/searchResult";
     }
 
     @RequestMapping("forebuyone")
-    public String buyone(int pid, int num, HttpSession session){
+    public String buyone(int pid, int num, HttpSession session) {
         Product p = productService.get(pid);
         int oiid = 0;
 
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         boolean found = false;
 
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
 
-        for(OrderItem oi : ois){
-            if(oi.getProduct().getId().intValue()==p.getId().intValue()){
-                oi.setNumber(oi.getNumber()+num);
+        for (OrderItem oi : ois) {
+            if (oi.getProduct().getId().intValue() == p.getId().intValue()) {
+                oi.setNumber(oi.getNumber() + num);
                 orderItemService.update(oi);
                 found = true;
                 oiid = oi.getId();
@@ -187,7 +189,7 @@ public class ForeController {
             }
         }
 
-        if(!found){
+        if (!found) {
             OrderItem oi = new OrderItem();
             oi.setUid(user.getId());
             oi.setNumber(num);
@@ -200,14 +202,14 @@ public class ForeController {
     }
 
     @RequestMapping("forebuy")
-    public String buy(Model model, String[] oiid, HttpSession session){
+    public String buy(Model model, String[] oiid, HttpSession session) {
         List<OrderItem> ois = new ArrayList<>();
         float total = 0;
 
-        for(String strid : oiid){
+        for (String strid : oiid) {
             int id = Integer.parseInt(strid);
             OrderItem oi = orderItemService.get(id);
-            total += oi.getProduct().getPromotePrice()*oi.getNumber();
+            total += oi.getProduct().getPromotePrice() * oi.getNumber();
             ois.add(oi);
         }
         session.setAttribute("ois", ois);
@@ -218,13 +220,13 @@ public class ForeController {
 
     @RequestMapping("foreaddCart")
     @ResponseBody
-    public String addCart(int pid, int num, Model model, HttpSession session){
+    public String addCart(int pid, int num, Model model, HttpSession session) {
         Product p = productService.get(pid);
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         boolean found = false;
 
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
-        for(OrderItem oi : ois) {
+        for (OrderItem oi : ois) {
             if (oi.getProduct().getId().intValue() == p.getId().intValue()) {
                 oi.setNumber(oi.getNumber() + num);
                 orderItemService.update(oi);
@@ -233,7 +235,7 @@ public class ForeController {
             }
         }
 
-        if(!found){
+        if (!found) {
             OrderItem oi = new OrderItem();
             oi.setUid(user.getId());
             oi.setNumber(num);
@@ -244,7 +246,7 @@ public class ForeController {
     }
 
     @RequestMapping("forecart")
-    public String cart(Model model, HttpSession session){
+    public String cart(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
         model.addAttribute("ois", ois);
@@ -254,15 +256,15 @@ public class ForeController {
 
     @RequestMapping("forechangeOrderItem")
     @ResponseBody
-    public String changeOrderItem(Model model, HttpSession session,int pid, int number){
-        User user = (User)session.getAttribute("user");
-        if(null == user){
+    public String changeOrderItem(Model model, HttpSession session, int pid, int number) {
+        User user = (User) session.getAttribute("user");
+        if (null == user) {
             return "fail";
         }
 
         List<OrderItem> ois = orderItemService.listByUser(user.getId());
-        for (OrderItem oi : ois){
-            if(oi.getProduct().getId().intValue() == pid){
+        for (OrderItem oi : ois) {
+            if (oi.getProduct().getId().intValue() == pid) {
                 oi.setNumber(number);
                 orderItemService.update(oi);
                 break;
@@ -273,9 +275,9 @@ public class ForeController {
 
     @RequestMapping("foredeleteOrderItem")
     @ResponseBody
-    public String deleteOrderItem(Model model, HttpSession session, int oiid){
+    public String deleteOrderItem(Model model, HttpSession session, int oiid) {
         User user = (User) session.getAttribute("user");
-        if(null == user)
+        if (null == user)
             return "fail";
 
         orderItemService.delete(oiid);
@@ -283,21 +285,21 @@ public class ForeController {
     }
 
     @RequestMapping("forecreateOrder")
-    public String createOrder(Model model, Order order, HttpSession session){
-        User user = (User)session.getAttribute("user");
+    public String createOrder(Model model, Order order, HttpSession session) {
+        User user = (User) session.getAttribute("user");
         String orderCode = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date()) + RandomUtils.nextInt(10000);
         order.setOrderCode(orderCode);
         order.setCreateDate(new Date());
         order.setUid(user.getId());
         order.setStatus(OrderService.waitPay);
-        List<OrderItem> ois = (List<OrderItem>)session.getAttribute("ois");
+        List<OrderItem> ois = (List<OrderItem>) session.getAttribute("ois");
 
         float total = orderService.add(order, ois);
         return "redirect:forealipay?oid=" + order.getId() + "&total=" + total;
     }
 
     @RequestMapping("forepayed")
-    public String payed(int oid, float total, Model model){
+    public String payed(int oid, float total, Model model) {
         Order order = orderService.get(oid);
         order.setStatus(OrderService.waitDelivery);
         order.setPayDate(new Date());
@@ -308,8 +310,8 @@ public class ForeController {
     }
 
     @RequestMapping("forebought")
-    public String bought(Model model, HttpSession session){
-        User user = (User)session.getAttribute("user");
+    public String bought(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
         List<Order> os = orderService.list(user.getId(), OrderService.delete);
 
         orderItemService.fill(os);
@@ -319,7 +321,7 @@ public class ForeController {
     }
 
     @RequestMapping("foreconfirmPay")
-    public String confirmPay(Model model, int oid){
+    public String confirmPay(Model model, int oid) {
         Order o = orderService.get(oid);
         orderItemService.fill(o);
         model.addAttribute("o", o);
@@ -328,7 +330,7 @@ public class ForeController {
     }
 
     @RequestMapping("foreorderConfirmed")
-    public String orderConfirmed(Model model, int oid){
+    public String orderConfirmed(Model model, int oid) {
         Order o = orderService.get(oid);
 
         o.setStatus(OrderService.waitReview);
@@ -340,7 +342,7 @@ public class ForeController {
 
     @RequestMapping("foredeleteOrder")
     @ResponseBody
-    public String deleteOrder(Model model, int oid){
+    public String deleteOrder(Model model, int oid) {
         Order o = orderService.get(oid);
         o.setStatus(OrderService.delete);
         orderService.update(o);
@@ -349,7 +351,7 @@ public class ForeController {
     }
 
     @RequestMapping("forereview")
-    public String review(Model model, int oid){
+    public String review(Model model, int oid) {
         Order o = orderService.get(oid);
         orderItemService.fill(o);
         Product p = o.getOrderItems().get(0).getProduct();
@@ -366,8 +368,8 @@ public class ForeController {
     }
 
     @RequestMapping("foredoreview")
-    public String doreview(Model model, HttpSession session, @RequestParam("oid")int oid,
-                           @RequestParam("pid")int pid, String content){
+    public String doreview(Model model, HttpSession session, @RequestParam("oid") int oid,
+                           @RequestParam("pid") int pid, String content) {
         Order o = orderService.get(oid);
         o.setStatus(OrderService.finish);
         orderService.update(o);
@@ -385,6 +387,6 @@ public class ForeController {
         review.setUid(user.getId());
         reviewService.add(review);
 
-        return "redirect:forereview?oid="+oid+"&showonly=true";
+        return "redirect:forereview?oid=" + oid + "&showonly=true";
     }
 }

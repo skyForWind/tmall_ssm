@@ -32,19 +32,18 @@ public class ProductImageController {
     ProductImageService productImageService;
 
     @RequestMapping("admin_productImage_add")
-    public String add(ProductImage  pi, HttpSession session, UploadedImageFile uploadedImageFile) {
+    public String add(ProductImage pi, HttpSession session, UploadedImageFile uploadedImageFile) {
         productImageService.add(pi);
-        String fileName = pi.getId()+ ".jpg";
+        String fileName = pi.getId() + ".jpg";
         String imageFolder;
-        String imageFolder_small=null;
-        String imageFolder_middle=null;
-        if(ProductImageService.type_single.equals(pi.getType())){
-            imageFolder= session.getServletContext().getRealPath("img/productSingle");
-            imageFolder_small= session.getServletContext().getRealPath("img/productSingle_small");
-            imageFolder_middle= session.getServletContext().getRealPath("img/productSingle_middle");
-        }
-        else{
-            imageFolder= session.getServletContext().getRealPath("img/productDetail");
+        String imageFolder_small = null;
+        String imageFolder_middle = null;
+        if (ProductImageService.type_single.equals(pi.getType())) {
+            imageFolder = session.getServletContext().getRealPath("img/productSingle");
+            imageFolder_small = session.getServletContext().getRealPath("img/productSingle_small");
+            imageFolder_middle = session.getServletContext().getRealPath("img/productSingle_middle");
+        } else {
+            imageFolder = session.getServletContext().getRealPath("img/productDetail");
         }
 
         File f = new File(imageFolder, fileName);
@@ -54,7 +53,7 @@ public class ProductImageController {
             BufferedImage img = ImageUtil.change2jpg(f);
             ImageIO.write(img, "jpg", f);
 
-            if(ProductImageService.type_single.equals(pi.getType())) {
+            if (ProductImageService.type_single.equals(pi.getType())) {
                 File f_small = new File(imageFolder_small, fileName);
                 File f_middle = new File(imageFolder_middle, fileName);
 
@@ -65,43 +64,42 @@ public class ProductImageController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redirect:admin_productImage_list?pid="+pi.getPid();
+        return "redirect:admin_productImage_list?pid=" + pi.getPid();
     }
 
     @RequestMapping("admin_productImage_delete")
-    public String delete(int id,HttpSession session) {
+    public String delete(int id, HttpSession session) {
         ProductImage pi = productImageService.get(id);
 
-        String fileName = pi.getId()+ ".jpg";
+        String fileName = pi.getId() + ".jpg";
         String imageFolder;
-        String imageFolder_small=null;
-        String imageFolder_middle=null;
+        String imageFolder_small = null;
+        String imageFolder_middle = null;
 
-        if(ProductImageService.type_single.equals(pi.getType())){
-            imageFolder= session.getServletContext().getRealPath("img/productSingle");
-            imageFolder_small= session.getServletContext().getRealPath("img/productSingle_small");
-            imageFolder_middle= session.getServletContext().getRealPath("img/productSingle_middle");
-            File imageFile = new File(imageFolder,fileName);
-            File f_small = new File(imageFolder_small,fileName);
-            File f_middle = new File(imageFolder_middle,fileName);
+        if (ProductImageService.type_single.equals(pi.getType())) {
+            imageFolder = session.getServletContext().getRealPath("img/productSingle");
+            imageFolder_small = session.getServletContext().getRealPath("img/productSingle_small");
+            imageFolder_middle = session.getServletContext().getRealPath("img/productSingle_middle");
+            File imageFile = new File(imageFolder, fileName);
+            File f_small = new File(imageFolder_small, fileName);
+            File f_middle = new File(imageFolder_middle, fileName);
             imageFile.delete();
             f_small.delete();
             f_middle.delete();
 
-        }
-        else{
-            imageFolder= session.getServletContext().getRealPath("img/productDetail");
-            File imageFile = new File(imageFolder,fileName);
+        } else {
+            imageFolder = session.getServletContext().getRealPath("img/productDetail");
+            File imageFile = new File(imageFolder, fileName);
             imageFile.delete();
         }
         productImageService.delete(id);
 
-        return "redirect:admin_productImage_list?pid="+pi.getPid();
+        return "redirect:admin_productImage_list?pid=" + pi.getPid();
     }
 
     @RequestMapping("admin_productImage_list")
     public String list(int pid, Model model) {
-        Product p =productService.get(pid);
+        Product p = productService.get(pid);
         List<ProductImage> pisSingle = productImageService.list(pid, ProductImageService.type_single);
         List<ProductImage> pisDetail = productImageService.list(pid, ProductImageService.type_detail);
 

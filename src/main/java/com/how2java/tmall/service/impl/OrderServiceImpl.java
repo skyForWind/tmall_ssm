@@ -46,8 +46,8 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectByPrimaryKey(id);
     }
 
-    public List<Order> list(){
-        OrderExample example =new OrderExample();
+    public List<Order> list() {
+        OrderExample example = new OrderExample();
         example.setOrderByClause("id desc");
         return orderMapper.selectByExample(example);
 
@@ -62,32 +62,32 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.selectByExample(example);
     }
 
-    public void  setUser(List<Order> os){
-        for(Order o : os){
+    public void setUser(List<Order> os) {
+        for (Order o : os) {
             setUser(o);
         }
     }
 
-    public void setUser(Order o){
+    public void setUser(Order o) {
         int uid = o.getUid();
         User u = userService.get(uid);
         o.setUser(u);
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED,rollbackForClassName="Exception")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackForClassName = "Exception")
     public float add(Order o, List<OrderItem> ois) {
         float total = 0;
         add(o);
 
-        if (false){
-            throw  new RuntimeException();
+        if (false) {
+            throw new RuntimeException();
         }
 
-        for (OrderItem oi : ois){
+        for (OrderItem oi : ois) {
             oi.setOid(o.getId());
             orderItemService.update(oi);
-            total+=oi.getProduct().getPromotePrice()*oi.getNumber();
+            total += oi.getProduct().getPromotePrice() * oi.getNumber();
         }
 
         return total;
